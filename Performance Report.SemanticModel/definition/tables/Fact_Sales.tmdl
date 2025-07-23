@@ -1,0 +1,86 @@
+table Fact_Sales
+	lineageTag: 8e0108c1-0219-4828-9ed4-d23b0dedf6c4
+
+	column Product_id
+		dataType: int64
+		formatString: 0
+		lineageTag: e2ddd268-0e1c-441d-a1e9-6260d722ff6b
+		summarizeBy: none
+		sourceColumn: Product_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sales_USD
+		dataType: double
+		lineageTag: 5c064998-2833-4b51-a8f1-a1e27f47c49f
+		summarizeBy: sum
+		sourceColumn: Sales_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column quantity
+		dataType: double
+		lineageTag: e13a4455-2023-40c0-853c-009b874bba66
+		summarizeBy: sum
+		sourceColumn: quantity
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Price_USD
+		dataType: double
+		lineageTag: a2612f5d-b07d-426a-83aa-05c34451651c
+		summarizeBy: sum
+		sourceColumn: Price_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column COGS_USD
+		dataType: double
+		lineageTag: 294985c4-8ce9-4eff-8d9f-8eeef172c98d
+		summarizeBy: sum
+		sourceColumn: COGS_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Date_Time
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 07629714-e647-4eec-a19e-95950d5f17b3
+		summarizeBy: none
+		sourceColumn: Date_Time
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Account_id
+		dataType: string
+		lineageTag: f57a6762-c563-4148-a5ea-8fc6a6acb9ef
+		summarizeBy: none
+		sourceColumn: Account_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Sales = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\jaswa\Downloads\Plant_DTS.xls"), null, true),
+				    Plant_FACT1 = Source{[Name="Plant_FACT"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(Plant_FACT1, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Product_id", Int64.Type}, {"Sales_USD", type number}, {"quantity", type number}, {"Price_USD", type number}, {"COGS_USD", type number}, {"Date_Time", type date}, {"Account_id", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,156 @@
+table _Measures
+	lineageTag: f06960cf-b853-42e3-bb34-798952ca0ae2
+
+	measure Sales = SUM(Fact_Sales[Sales_USD])
+		displayFolder: Base Measures
+		lineageTag: 0a63a60a-c1e1-40c5-9fad-3ab9a466efbf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Quantity = SUM(Fact_Sales[quantity])
+		displayFolder: Base Measures
+		lineageTag: fab983f0-797d-4f53-b3a2-4acf9aa67ae9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure COGs = ```
+			SUM(Fact_Sales[COGS_USD]) 
+			```
+		isHidden
+		displayFolder: Base Measures
+		lineageTag: d3145d9f-714d-46d0-86c6-39c95319f8db
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Gross Profit' = [Sales] - [COGs]
+		displayFolder: Base Measures
+		lineageTag: ba495378-8fd1-45c2-a685-0f7a54c78abb
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure PYTD_Sales =
+			
+			CALCULATE(
+			    [Sales],
+			    SAMEPERIODLASTYEAR(Dim_Date[Date]),
+			    Dim_Date[InPast] = TRUE
+			)
+		displayFolder: PYTD
+		lineageTag: e8a90371-a6e2-4e3b-9d51-19b334487ce7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure PYTD_Quantity =
+			
+			CALCULATE(
+			    [Quantity],
+			    SAMEPERIODLASTYEAR(Dim_Date[Date]),
+			    Dim_Date[InPast] = TRUE
+			)
+		displayFolder: PYTD
+		lineageTag: ae75d680-a6cf-47d7-8f13-06dde5549092
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure PYTD_GrossProfit =
+			
+			CALCULATE(
+			    [Gross Profit],
+			    SAMEPERIODLASTYEAR(Dim_Date[Date]),
+			    Dim_Date[InPast] = TRUE()
+			)
+		displayFolder: PYTD
+		lineageTag: 5ec14002-17e7-453b-951c-cd86a88f6b93
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure YTD_Sales = TOTALYTD([Sales], Fact_Sales[Date_Time])
+		displayFolder: YTD
+		lineageTag: f6e6953f-e42d-43f7-becf-19d504849016
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure YTD_Quantity = TOTALYTD([Quantity], Fact_Sales[Date_Time])
+		displayFolder: YTD
+		lineageTag: bb946c05-114f-4868-bc0c-eaf99bc0b978
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure YTD_GrossProfit = TOTALYTD([Gross Profit], Fact_Sales[Date_Time])
+		displayFolder: YTD
+		lineageTag: a930abed-63bc-4454-9df5-953f3bebf925
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure S_PYTD =
+			
+			VAR selected_value = SELECTEDVALUE(Slc_Values[Values])
+			VAR result = SWITCH(selected_value,
+			    "Sales", [PYTD_Sales],
+			    "Quantity", [PYTD_Quantity],
+			    "Gross Profit", [PYTD_GrossProfit],
+			    BLANK()
+			)
+			RETURN
+			result
+		displayFolder: SWITCH
+		lineageTag: 2200bae5-215d-418b-8995-2a79504b7f84
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure S_YTD =
+			
+			VAR selected_value = SELECTEDVALUE(Slc_Values[Values])
+			VAR result = SWITCH(selected_value,
+			    "Sales", [YTD_Sales],
+			    "Quantity", [YTD_Quantity],
+			    "Gross Profit", [YTD_GrossProfit],
+			    BLANK()
+			)
+			RETURN
+			result
+		displayFolder: SWITCH
+		lineageTag: f6ee98b5-5472-4c60-adce-bd99128d6278
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YTD vs PYTD' = [S_YTD] - [S_PYTD]
+		displayFolder: SWITCH
+		lineageTag: bed4c699-23a1-40dc-be7d-cfab8f3ba822
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure GP% = DIVIDE([Gross Profit], [Sales])
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: e54237f5-849a-43e2-8aaf-3495ea1123bb
+
+	measure '_Waterfall title' = SELECTEDVALUE(Slc_Values[Values]) & " YTD vs PYTD | Month - Country - Product"
+		lineageTag: 2ccb0f07-b1ad-4fc3-b30c-5708718b987b
+
+	measure '_Column Chart title' = SELECTEDVALUE(Slc_Values[Values]) & " YTD & PYTD | Month"
+		lineageTag: 8eb0ab92-4665-4acf-a579-67f5a87929a3
+
+	measure '_Scatter title' = "Account Profitability Segmentation | GP% and " & SELECTEDVALUE(Slc_Values[Values])
+		lineageTag: 4bf127c7-dbd4-41cb-a8a4-6cadbfa3cde1
+
+	measure '_Report Title' = "Plant Co. " & SELECTEDVALUE(Slc_Values[Values]) & " Performance " & SELECTEDVALUE(Dim_Date[Date].[Year])
+		lineageTag: 5de05d05-b4b1-440e-966f-f1d0f6e6d6c9
+
+	column Column
+		isHidden
+		formatString: 0
+		lineageTag: ff6bcc6c-98f0-416e-99f6-c661e0e815e1
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Column]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = calculated
+		mode: import
+		source = Row("Column", BLANK())
+
+	annotation PBI_Id = 31fd210145ab49458dc04c4d41206068
+
+	annotation 436ba87b-9c83-4389-a31b-ebd06a36be98 = {"Expression":""}
+
