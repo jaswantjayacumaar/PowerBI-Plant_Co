@@ -40,4 +40,6 @@ The dashboard leverages Power BI's robust analytics to transform complex dataset
 
 ## Screenshots
 - **Figure 1: Initial Dashboard View** - Displays the main layout with KPI cards, treemap, and charts.
+  ![Figure 1](https://github.com/jaswantjayacumaar/PowerBI-Plant_Co/blob/main/Screenshots/Drill%20Down%20Mode.jpg)
 - **Figure 2: Drill-Down Mode View** - Shows detailed data exploration for specific metrics.
+  ![Figure 2](https://github.com/jaswantjayacumaar/PowerBI-Plant_Co/blob/main/Screenshots/Drill%20Down%20Mode.jpg)
