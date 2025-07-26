@@ -36,6 +36,7 @@ The dashboard leverages Power BI's robust analytics to transform complex dataset
 ### File Descriptions
 - **.pbip file**: The Power BI project file, which serves as a solution file for managing the dashboard's source code, data model, and report definitions in a collaborative environment.
 - **.pbix file**: The Power BI report file, a standalone file containing the complete dashboard with data, visuals, and interactivity for direct use in Power BI Desktop.
+- **Excel sheet - Dataset**: The `Plant_DTS.xls` file, which provides the raw data including sales transactions, account details, and plant classifications used to build the dashboard.
 - **PDF containing the report**: A compiled document summarizing the dashboard's design, insights, and usage instructions, generated from the project documentation.
 
 ## Screenshots
